@@ -94,4 +94,71 @@ final class TaskFlowTests: XCTestCase {
     
     // MARK: Class #2
     
+    
+    /// UI Test
+    func test_addTask_UI() {
+        // Arrange
+        let app = XCUIApplication()
+        app.launch()
+        
+        // Act
+        app.textFields["New task..."].typeText("Milk")
+        app.buttons["Add"].tap()
+        
+        // Assert
+        XCTAssert(app.staticTexts["Mik"].exists)
+    }
+    
+    /// TDD priority test
+    func test_addTask_defaultPriorityIsMedium(){
+        // Arrange
+        
+        // Act
+        viewModel.addTask(title: "Task A")
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks[0].priority, .medium)
+    }
+    
+    /// TDD High priority store test
+    func test_addTask_withHighPriority_storesPriority() {
+        // Arrange
+        
+        // Act
+        viewModel.addTask(title: "Urgent", priority: .high)
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks[0].priority, .high)
+    }
+    
+    /// TDD Test task with priority returns only matching
+    func test_task_forPriority_returnsOnlyMatchingTask() {
+        // Arrange
+        viewModel.addTask(title: "Low", priority: .low)
+        viewModel.addTask(title: "High 1", priority: .high)
+        viewModel.addTask(title: "High 2", priority: .high)
+        
+        // Act
+        let highTasks = viewModel.tasks(for: .high)
+        
+        // Assert
+        XCTAssertEqual(highTasks.count, 2)
+        XCTAssertTrue(highTasks.allSatisfy { $0.priority == .high })
+    }
+    
+    /// TDD Test task sorted by priority high first
+    func test_taskSortedByPriority_returnHighFirst() {
+        // Arrange
+        viewModel.addTask(title: "Low", priority: .low)
+        viewModel.addTask(title: "Medium", priority: .medium)
+        viewModel.addTask(title: "High", priority: .high)
+        
+        // Act
+        let sorted = viewModel.tasksSortedByPriority
+        
+        // Assert
+        XCTAssertEqual(sorted[0].priority, .high)
+        XCTAssertEqual(sorted[1].priority, .medium)
+        XCTAssertEqual(sorted[2].priority, .low)
+    }
  }

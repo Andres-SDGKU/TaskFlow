@@ -8,7 +8,7 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 HStack {
-                    TextField("New task", text: $newTaskTitle)
+                    TextField("New task...", text: $newTaskTitle)
                         .textFieldStyle(.roundedBorder)
                         .accessibilityIdentifier("add_task_button")
                     Button("Add") {
