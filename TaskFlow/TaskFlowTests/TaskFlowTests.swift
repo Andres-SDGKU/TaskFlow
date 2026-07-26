@@ -179,7 +179,7 @@ final class TaskFlowTests: XCTestCase {
     // Test to add a task and set a reminder
     func test_addTask_withDueDate_schedulesReminderExactlyOnce() {
         // Arrange
-        let mockScheduler = MockNoficationsScheduler()
+        let mockScheduler = MockNotificationsScheduler()
         let viewModel = TaskListViewModel(notificationScheduler: mockScheduler)
         
         // Act
@@ -192,7 +192,7 @@ final class TaskFlowTests: XCTestCase {
     // Test without due date scheduling reminder
     func test_addTask_withoutDueDate_doesNotScheduleReminder() {
         // Arrange
-        let mockScheduler = MockNoficationsScheduler()
+        let mockScheduler = MockNotificationsScheduler()
         let viewModel = TaskListViewModel(notificationScheduler: mockScheduler)
         
         // Act

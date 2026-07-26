@@ -8,7 +8,7 @@
 import Foundation
 @testable import TaskFlow
 
-class MockNoficationsScheduler: NotificationSchedulingProtocol {
+class MockNotificationsScheduler: NotificationSchedulingProtocol {
     var scheduleCallCount = 0
     var lastScheduleTask: TaskItem?
     func scheduleReminder(for task: TaskItem) {

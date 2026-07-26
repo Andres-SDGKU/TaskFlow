@@ -7,6 +7,10 @@
 
 import Foundation
 
-protocol ClockProtocol { func now() -> Date }
+protocol ClockProtocol: AnyObject {
+    func now() -> Date
+}
 
-struct RealClock: ClockProtocol { func now() -> Date { Date() } }
+class RealClock: ClockProtocol {
+    func now() -> Date { Date() }
+}
