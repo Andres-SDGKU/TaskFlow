@@ -11,18 +11,50 @@ import Combine
 class TaskListViewModel: ObservableObject {
     @Published var tasks: [TaskItem] = []
     
-    // MARK: Class #1 Functions
+    // MARK: Class #3 Mocks, DI, Stubs
+    private let service: TaskServiceProtocol
+    private let notificationScheduler: NotificationSchedulingProtocol
+    private let clock: ClockProtocol
     
-    func addTask(title: String, priority: Priority = .medium) {
-        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        tasks.append(TaskItem(title: trimmed, priority: priority))
+    init(
+        service: TaskServiceProtocol = TaskService(),
+        notificationScheduler: NotificationSchedulingProtocol = NotificationScheduler(),
+        clock: ClockProtocol = RealClock()
+    ) {
+        self.service = service
+        self.notificationScheduler = notificationScheduler
+        self.clock = clock
     }
     
+    // Function that calls all the task using the service
+    func loadTasks() {
+        tasks = service.fetchTasks()
+    }
+    
+    // Function task Overdue
+    func isTaskOverdue(_ task: TaskItem) -> Bool {
+        task.isOverdue(now: clock.now())
+    }
+    
+    // MARK: Class #1 Functions
+    
+    func addTask(title: String, priority: Priority = .medium, dueDate: Date? = nil) {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let task = TaskItem(title: trimmed, priority: priority, dueDate: dueDate)
+        tasks.append(task)
+        if dueDate != nil {
+            notificationScheduler.scheduleReminder(for: task)
+        }
+    }
+    
+    /// Changed in class #3
     // Remove the task from the list
     func removeTask(at index: Int) {
         guard tasks.indices.contains(index) else { return }
+        let removedId = tasks[index].id
         tasks.remove(at: index)
+        service.delete(id: removedId)
     }
     
     // Toggles the completion of the state
@@ -53,4 +85,6 @@ class TaskListViewModel: ObservableObject {
             return i < j
         }
     }
+    
+    nonisolated deinit {}
 }

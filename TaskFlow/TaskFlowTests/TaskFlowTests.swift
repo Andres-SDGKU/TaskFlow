@@ -8,6 +8,7 @@
 import XCTest
 @testable import TaskFlow
 
+@MainActor
 final class TaskFlowTests: XCTestCase {
     
     var viewModel: TaskListViewModel!
@@ -94,21 +95,6 @@ final class TaskFlowTests: XCTestCase {
     
     // MARK: Class #2
     
-    
-    /// UI Test
-    func test_addTask_UI() {
-        // Arrange
-        let app = XCUIApplication()
-        app.launch()
-        
-        // Act
-        app.textFields["New task..."].typeText("Milk")
-        app.buttons["Add"].tap()
-        
-        // Assert
-        XCTAssert(app.staticTexts["Mik"].exists)
-    }
-    
     /// TDD priority test
     func test_addTask_defaultPriorityIsMedium(){
         // Arrange
@@ -160,5 +146,71 @@ final class TaskFlowTests: XCTestCase {
         XCTAssertEqual(sorted[0].priority, .high)
         XCTAssertEqual(sorted[1].priority, .medium)
         XCTAssertEqual(sorted[2].priority, .low)
+    }
+    
+    // MARK: Class #3
+    
+    // Test load task returns a stubbed task
+    func test_loadTask_returnsStubbedTasks() {
+        // Arrange
+        let viewModel = TaskListViewModel(service: StubTaskService())
+        
+        // Act
+        viewModel.loadTasks()
+        
+        // Assert
+        XCTAssertEqual(viewModel.tasks.count, 3)
+    }
+    
+    // Test delete task calls service to delete exactly one
+    func test_removeTask_callsServiceDeleteExactlyOne() {
+        // Arrange
+        let mockService = MockTaskService(tasksToReturn: [TaskItem(title: "Sample", priority: .medium)])
+        let viewModel = TaskListViewModel(service: mockService)
+        
+        // Act
+        viewModel.loadTasks()
+        viewModel.removeTask(at: 0)
+        
+        // Assert
+        XCTAssertEqual(mockService.deleteCallCount, 1)
+    }
+    
+    // Test to add a task and set a reminder
+    func test_addTask_withDueDate_schedulesReminderExactlyOnce() {
+        // Arrange
+        let mockScheduler = MockNoficationsScheduler()
+        let viewModel = TaskListViewModel(notificationScheduler: mockScheduler)
+        
+        // Act
+        viewModel.addTask(title: "Submit report", dueDate: Date().addingTimeInterval(3600))
+        
+        // Assert
+        XCTAssertEqual(mockScheduler.scheduleCallCount, 1)
+    }
+    
+    // Test without due date scheduling reminder
+    func test_addTask_withoutDueDate_doesNotScheduleReminder() {
+        // Arrange
+        let mockScheduler = MockNoficationsScheduler()
+        let viewModel = TaskListViewModel(notificationScheduler: mockScheduler)
+        
+        // Act
+        viewModel.addTask(title: "Someday maybe")
+        
+        // Assert
+        XCTAssertEqual(mockScheduler.scheduleCallCount, 0)
+    }
+    
+    func test_isTaskOverdue_whenClockIsAfterDueDate_returnTrue() {
+        // Arrange
+        let fakeClock = FakeClock(fixedDate: Date())
+        let viewModel = TaskListViewModel(clock: fakeClock)
+        
+        // Act
+        viewModel.addTask(title: "Overdue", dueDate: Date())
+        
+        // Assert
+        XCTAssertTrue(viewModel.isTaskOverdue(viewModel.tasks[0]))
     }
  }

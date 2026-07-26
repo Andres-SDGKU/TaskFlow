@@ -16,4 +16,10 @@ struct TaskItem: Identifiable, Equatable {
     var title: String
     var isCompleted: Bool = false
     var priority: Priority
+    var dueDate: Date? = nil
+    
+    func isOverdue(now: Date) -> Bool {
+        guard let dueDate else { return false }
+        return dueDate < now && !isCompleted
+    }
 }
