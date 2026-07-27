@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol TaskServiceProtocol: AnyObject {
+protocol TaskServiceProtocol {
     func fetchTasks() -> [TaskItem]
     func delete(id: UUID)
 }
@@ -15,7 +15,7 @@ protocol TaskServiceProtocol: AnyObject {
 class TaskService: TaskServiceProtocol {
     func fetchTasks() -> [TaskItem] { [] }
     func delete(id: UUID) {
-           // simula el delete real en el backend
+          // Simulates real delete in backend
        }
 }
 

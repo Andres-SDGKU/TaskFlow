@@ -85,6 +85,4 @@ class TaskListViewModel: ObservableObject {
             return i < j
         }
     }
-    
-    nonisolated deinit {}
 }

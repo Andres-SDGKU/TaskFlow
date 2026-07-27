@@ -22,6 +22,7 @@ final class TaskFlowTests: XCTestCase {
     }
     
     // MARK: Class #1
+    
     func test_addTask_increasesCount() {
         // Arrange - viewModel already empty thanks to setUp
        
@@ -150,7 +151,7 @@ final class TaskFlowTests: XCTestCase {
     
     // MARK: Class #3
     
-    // Test load task returns a stubbed task
+    /// Test load task returns a stubbed task
     func test_loadTask_returnsStubbedTasks() {
         // Arrange
         let viewModel = TaskListViewModel(service: StubTaskService())
@@ -162,7 +163,7 @@ final class TaskFlowTests: XCTestCase {
         XCTAssertEqual(viewModel.tasks.count, 3)
     }
     
-    // Test delete task calls service to delete exactly one
+    /// Test delete task calls service to delete exactly one
     func test_removeTask_callsServiceDeleteExactlyOne() {
         // Arrange
         let mockService = MockTaskService(tasksToReturn: [TaskItem(title: "Sample", priority: .medium)])
@@ -176,7 +177,7 @@ final class TaskFlowTests: XCTestCase {
         XCTAssertEqual(mockService.deleteCallCount, 1)
     }
     
-    // Test to add a task and set a reminder
+    /// Test to add a task and set a reminder
     func test_addTask_withDueDate_schedulesReminderExactlyOnce() {
         // Arrange
         let mockScheduler = MockNotificationsScheduler()
@@ -189,7 +190,7 @@ final class TaskFlowTests: XCTestCase {
         XCTAssertEqual(mockScheduler.scheduleCallCount, 1)
     }
     
-    // Test without due date scheduling reminder
+    /// Test without due date scheduling reminder
     func test_addTask_withoutDueDate_doesNotScheduleReminder() {
         // Arrange
         let mockScheduler = MockNotificationsScheduler()
@@ -202,6 +203,7 @@ final class TaskFlowTests: XCTestCase {
         XCTAssertEqual(mockScheduler.scheduleCallCount, 0)
     }
     
+    /// Test task is overdue when cloock is after due date
     func test_isTaskOverdue_whenClockIsAfterDueDate_returnTrue() {
         // Arrange
         let dueDate = Date().addingTimeInterval(-3600)

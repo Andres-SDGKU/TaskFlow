@@ -5,7 +5,7 @@
 //  Created by Andres De La Cruz on 7/25/26.
 //
 
-protocol NotificationSchedulingProtocol: AnyObject {
+protocol NotificationSchedulingProtocol {
     func scheduleReminder(for task: TaskItem)
 }
 
