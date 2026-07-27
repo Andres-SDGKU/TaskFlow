@@ -204,11 +204,12 @@ final class TaskFlowTests: XCTestCase {
     
     func test_isTaskOverdue_whenClockIsAfterDueDate_returnTrue() {
         // Arrange
+        let dueDate = Date().addingTimeInterval(-3600)
         let fakeClock = FakeClock(fixedDate: Date())
         let viewModel = TaskListViewModel(clock: fakeClock)
         
         // Act
-        viewModel.addTask(title: "Overdue", dueDate: Date())
+        viewModel.addTask(title: "Overdue", dueDate: dueDate)
         
         // Assert
         XCTAssertTrue(viewModel.isTaskOverdue(viewModel.tasks[0]))
